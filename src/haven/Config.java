@@ -124,8 +124,12 @@ public class Config {
     public static boolean radar;
     public static boolean showViewDistance;
 	public static boolean autohearth;
+	public static boolean autologout;
 	public static boolean hearthunknown;
 	public static boolean hearthred;
+	public static boolean autoaggro;
+	public static boolean aggrounknown;
+	public static boolean aggrored;
 	
     static {
 	try {
@@ -552,8 +556,12 @@ public class Config {
         musicVol = Integer.parseInt(options.getProperty("music_vol", "100"));
         currentVersion = options.getProperty("version", "");
         autohearth = options.getProperty("autohearth", "false").equals("true");
-        hearthunknown = options.getProperty("heathunknown", "false").equals("true");
+		autologout = options.getProperty("autologout", "false").equals("true");
+        hearthunknown = options.getProperty("hearthunknown", "false").equals("true");
         hearthred = options.getProperty("hearthred", "false").equals("true");
+		aggrounknown = options.getProperty("aggrounknown", "false").equals("true");
+        aggrored = options.getProperty("aggrored", "false").equals("true");
+		autoaggro = options.getProperty("autoaggro", "false").equals("true");
         hideObjectList.clear();
         String hideObjects = options.getProperty("hideObjects", "");
         if (!hideObjects.isEmpty()) {
@@ -649,8 +657,12 @@ public class Config {
         options.setProperty("dontScaleMMIcons", dontScaleMMIcons?"true":"false");
         options.setProperty("radar", radar?"true":"false");
         options.setProperty("autohearth", autohearth?"true":"false");
+		options.setProperty("autologout", autologout?"true":"false");
         options.setProperty("hearthunknown", hearthunknown?"true":"false");
         options.setProperty("hearthred", hearthred?"true":"false");
+		options.setProperty("aggrounknown", aggrounknown?"true":"false");
+        options.setProperty("aggrored", aggrored?"true":"false");
+		options.setProperty("autoaggro", autoaggro?"true":"false");
         options.setProperty("showViewDistance", showViewDistance?"true":"false");
         options.setProperty("version", currentVersion);
         

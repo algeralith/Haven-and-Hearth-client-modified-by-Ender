@@ -64,6 +64,8 @@ public class OptWnd extends Window {
 	    this.args = args;
 	}
     }
+	
+	public static CheckBox autologout = null, autohearth = null, autoaggro = null;
 
     public OptWnd(Coord c, Widget parent) {
 	super(c, new Coord(550, 445), parent, "Options");
@@ -221,37 +223,75 @@ public class OptWnd extends Window {
 		}
 	    }).a = Config.highlightSkills;
 		
-		(new CheckBox(new Coord(440, 130), tab, "Auto-hearth") {
-		public void changed(boolean val) {
-		    Config.autohearth = val;
-		    Config.saveOptions();
-		}
-	    }).a = Config.autohearth;
 		
-		(new CheckBox(new Coord(455, 165), tab, "Unknown") {
+		Widget ahwid = new Frame(new Coord(145, 30), new Coord(160, 100), tab);
+		
+		new Label(new Coord(10, 10), ahwid, "Auto Hearth/Logout");
+		autohearth = (new CheckBox(new Coord(5, 10), ahwid, "Hearth OR") {
+		public void changed(boolean val) {
+			Config.autohearth = val;
+			Config.saveOptions();
+			if (val == true) {
+				changebox(!val, true);
+			}
+		}
+		});
+		autohearth.a = Config.autohearth;
+
+		autologout = (new CheckBox(new Coord(85, 10), ahwid, "Logout") {
+		public void changed(boolean val) {
+			Config.autologout = val;
+			Config.saveOptions();
+			if (val == true) {
+				changebox(!val, false);
+			}
+		}
+		});
+		autologout.a = Config.autologout;
+		
+		new Label(new Coord(10, 50), ahwid, "When you see someone");
+
+		(new CheckBox(new Coord(5, 60), ahwid, "Unknown") {
 			public void changed(boolean val) {
 			    Config.hearthunknown = val;
 			    Config.saveOptions();
 			}
 		    }).a = Config.hearthunknown;
-	    
-		(new CheckBox(new Coord(455, 195), tab, "Red") {
+
+		(new CheckBox(new Coord(85, 60), ahwid, "Red") {
 			public void changed(boolean val) {
 			    Config.hearthred = val;
 			    Config.saveOptions();
 			}
 		    }).a = Config.hearthred;
+			
+		Widget aawid = new Frame(new Coord(315, 30), new Coord(160, 100), tab);
 		
-	    Widget editbox = new Frame(new Coord(310, 30), new Coord(90, 100), tab);
-	    new Label(new Coord(20, 10), editbox, "Edit mode:");
-	    RadioGroup editmode = new RadioGroup(editbox) {
-		public void changed(int btn, String lbl) {
-		    Utils.setpref("editmode", lbl.toLowerCase());
-		    }};
-	    editmode.add("Emacs", new Coord(10, 25));
-	    editmode.add("PC", new Coord(10, 50));
-	    if(Utils.getpref("editmode", "pc").equals("emacs")) editmode.check("Emacs");
-	    else                                                editmode.check("PC");
+		new Label(new Coord(10, 10), aawid, "Auto Aggro (Turn CA on!)");
+		autoaggro = (new CheckBox(new Coord(5, 10), aawid, "Activated") {
+		public void changed(boolean val) {
+			Config.autoaggro = val;
+			Config.saveOptions();
+		}
+		});
+		autoaggro.a = Config.autoaggro;
+		
+		new Label(new Coord(10, 50), aawid, "When you see someone");
+
+		(new CheckBox(new Coord(5, 60), aawid, "Unknown") {
+			public void changed(boolean val) {
+			    Config.aggrounknown = val;
+			    Config.saveOptions();
+			}
+		    }).a = Config.aggrounknown;
+
+		(new CheckBox(new Coord(85, 60), aawid, "Red") {
+			public void changed(boolean val) {
+			    Config.aggrored = val;
+			    Config.saveOptions();
+			}
+		    }).a = Config.aggrored;
+		
 	}
 
 	{ /* CAMERA TAB */
@@ -355,6 +395,17 @@ public class OptWnd extends Window {
 		    Config.saveOptions();
 		}
 	    }).a = Config.noborders;
+		
+		Widget editbox = new Frame(new Coord(450, 30), new Coord(75, 100), tab);
+	    new Label(new Coord(10, 10), editbox, "Edit mode:");
+	    RadioGroup editmode = new RadioGroup(editbox) {
+		public void changed(int btn, String lbl) {
+		    Utils.setpref("editmode", lbl.toLowerCase());
+		    }};
+	    editmode.add("Emacs", new Coord(5, 25));
+	    editmode.add("PC", new Coord(5, 50));
+	    if(Utils.getpref("editmode", "pc").equals("emacs")) editmode.check("Emacs");
+	    else                                                editmode.check("PC");
 	}
 
 	{ /* AUDIO TAB */
@@ -507,7 +558,25 @@ public class OptWnd extends Window {
 	    if (t.btn.text.text.equals(last))
 		body.showtab(t);
 	}
+	
     }
+	
+	public void changebox(boolean val, boolean which) {
+		if (which) {
+			autologout.changed(val);
+			autologout.a = val;
+		} else {
+			autohearth.changed(val);
+			autohearth.a = val;
+		}
+	}
+	
+	public static void deactag() {
+		if (autoaggro != null) {
+			autoaggro.changed(false);
+			autoaggro.a = false;
+		}
+	}
 
     private void setcamera(String camtype) {
 	curcam = camtype;

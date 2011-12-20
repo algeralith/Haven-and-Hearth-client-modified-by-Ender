@@ -931,8 +931,11 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 		if(gob.isHuman() && !ui.sess.glob.party.memb.keySet().contains(gob.id)){
 		    g.chcolor(255, 0, 255, 96);
 		    drawradius(g, gob.sc, 10);
-			if (Config.autohearth) {
+			if ((Config.autohearth == true) || (Config.autologout == true)) {
 				autohearth(gob);
+			}
+			if (Config.autoaggro) {
+				autoaggro(gob);
 			}
 		}
 		
@@ -950,12 +953,22 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 			KinInfo kin = gob.getattr(KinInfo.class);
 			if(kin == null){
 				if (Config.hearthunknown) {
-					hearth();
+					if (Config.autologout) {
+						logout();
+					} else {
+						hearth();
+					}
+		
 				}
 			} else {
-				if (kin.group == 2) {
-					if (Config.hearthred)
-						hearth();
+				if (Config.hearthred) {
+					if (kin.group == 2) {
+						if (Config.autologout) {
+							logout();
+						} else {
+							hearth();
+						}
+					}
 				}
 			}
 		}
@@ -965,6 +978,35 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 		String[] action = {"theTrav", "hearth"};
 		UI.instance.mnu.wdgmsg("act", (Object[])action);
 		lastah = System.currentTimeMillis() + 5000;
+	}
+	
+	private void autoaggro(Gob gob) {
+		KinInfo kin = gob.getattr(KinInfo.class);
+		if(kin == null){
+			if (Config.aggrounknown) {
+					aggro(gob);
+			}
+		} else {
+			if (Config.aggrored) {
+				if (kin.group == 2) {
+					aggro(gob);
+				}
+			}
+		}
+	}
+	
+	private void aggro(Gob gob) {
+		if (UI.instance.mnu != null) {
+			String[] action = {"atk", "pow"};
+			UI.instance.mnu.wdgmsg("act", (Object[])action);
+			wdgmsg("click",gob.getc(),gob.getc(),1,ui.modflags(),gob.id,gob.getc());
+			wdgmsg("click",glob.oc.getgob(playergob).getc(),glob.oc.getgob(playergob).getc(),1,ui.modflags(),glob.oc.getgob(playergob).id,glob.oc.getgob(playergob).getc());
+			OptWnd.deactag();
+		}
+	}
+	
+	private void logout() {
+		ui.sess.close();
 	}
     
     private void drawtracking(GOut g) {
